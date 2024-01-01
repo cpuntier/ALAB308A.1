@@ -22,73 +22,82 @@ try {
 
 //Part 2 Trampolines
 
-let arrays = [1, 2, 3, [4, 5,[6, 7, 8]],[9, [10]]];
+let arrays = [1, 2, 3, [4, 5, [6, 7, 8]], [9, [10]]];
 
 function flattenArray(array) {
     let output = []
 
-    for (let i = 0; i <array.length;i++){
-        if(Array.isArray(array[i])){
-            return () => 
+    for (let i = 0; i < array.length; i++) {
+        if (Array.isArray(array[i])) {
+            return () =>
                 output.concat(flattenArray(array[i]));
 
-        }else{
+        } else {
             output.push(array[i]);
         }
     }
-    return () =>  output;
-    
+    return () => output;
+
 }
 
 //What even is trampolining
 const trampoline = (f, ...args) => {
     let output = [];
     let result = f(...args);
-    while (typeof result === "function"){
+    while (typeof result === "function") {
         result = result();
         output.concat(result);
     }
     return output
 }
 
-console.log(trampoline(flattenArray(arrays)));
+//console.log(trampoline(flattenArray(arrays)));
 
 //part 3 Deferred Execution
 
 let textHolder = document.getElementById("textHolder");
 
-console.log(textHolder);
+//console.log(textHolder);
 
-function primeList(n){
+function primeList(n) {
     let newHTML = `<p>Prime Numbers</p>`;
+    setTimeout(setInnerHTML.bind(null,newHTML), 5);
+    let i = 0;
 
-    for (let i = 2;i <=n;i ++){
-        if (isPrime(i)){
-        newHTML += `<p>${i}</p>`
+
+    for (i = 2; i <= n; i++) {
+        if (isPrime(i)) {
+            newHTML = `<p>${i}</p>`;
+            setTimeout(setInnerHTML.bind(null, newHTML), 2000 + (i*100));
+//            console.log(i);
+
         }
+        
     }
-    textHolder.innerHTML += newHTML;
+    setTimeout(makeAlert,2000 + (i*105)); //alert triggers when for loop finishes and timer depends on last iteration
+
 }
 
-
-function isPrime(n){
-    if(n <= 1){
+function isPrime(n) {
+    if (n <= 1) {
         return false;
     }
-    for(let i = 2;i <= n; i ++){
-        if ((n%i) === 0){
+    for (let i = 2; i < n; i++) {
+        if ((n % i) === 0) {
             return false;
         }
-        return true;
     }
+    return true;
 }
 
-for(let i=0 ;i<100 ;i++){
-    console.log(i,isPrime(i));
+function setInnerHTML(newHTML) { // sets innerhtml to add the prime to the list
+    textHolder.innerHTML += newHTML
 }
-console.log("Done");
+function makeAlert(){
+    alert("numbers are finished")
+}
+
 
 primeList(10000);
-//alert("NUMBERS ARE LISTED")
 
-setTimeout(alert("Numbers Are Listed"),1);
+console.log(isPrime(9));
